@@ -1,86 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct diziElemanlari{
-int boyut;
-int indis;
-int *veri;
-
-
+struct arrayElements {
+    int size;
+    int index;
+    int *data;
 };
-typedef struct diziElemanlari Dizim;
-//dizi olusturacaz
-void diziOlustur(Dizim *d,int boyut){
-d->boyut=boyut;
-d->veri=(int*)malloc(boyut*sizeof(int));
-d->indis=0;
+typedef struct arrayElements Array;
 
-
+// Function to create array
+void createArray(Array *arr, int size) {
+    arr->size = size;
+    arr->data = (int*)malloc(size * sizeof(int));
+    arr->index = 0;
 }
 
-void genislet(Dizim *d,int eklenenBoyut){
-d->boyut+=eklenenBoyut;
-d->veri=(int*)realloc(d->veri,d->boyut*sizeof(int));
-
-
-
-
-
+// Function to extend array
+void extend(Array *arr, int addedSize) {
+    arr->size += addedSize;
+    arr->data = (int*)realloc(arr->data, arr->size * sizeof(int));
 }
-void diziyeElemanEkle(Dizim *d,int v){
-if(d->indis==d->boyut-1){
-    printf("Dizinin boyutunu genisletmek ister misiniz?(Cikis -1):");
-    int eklenenBoyut;
-    if(eklenenBoyut==-1){
-        return 0;
+
+// Function to add element to array
+void addElementToArray(Array *arr, int value) {
+    if (arr->index == arr->size - 1) {
+        printf("Would you like to extend the size of the array? (Exit -1): ");
+        int addedSize;
+        scanf("%d", &addedSize);
+        if (addedSize == -1) {
+            return;
+        }
+        extend(arr, addedSize);
     }
-    scanf("%d",&eklenenBoyut);
-    genislet(d,eklenenBoyut);
+    arr->data[arr->index] = value;
+    arr->index++;
 }
-d->veri[d->indis]=v;
-d->indis++;
-
-
-
-
-}
-
-
-
-
-
-
-
-
 
 int main() {
-int sayi;
-printf("dizininzde kac eleman olacak:");
-scanf("%d",&sayi);
+    int size;
+    printf("How many elements will be in your array: ");
+    scanf("%d", &size);
 
-Dizim dizi;
-diziOlustur(&dizi,sayi);
+    Array array;
+    createArray(&array, size);
 
+    for (int i = 0; i < size; i++) {
+        printf("\nEnter the %dth element of the array: ", i + 1);
+        int element;
+        scanf("%d", &element);
+        addElementToArray(&array, element);
+    }
 
-for(int i=0;i<sayi;i++){
-printf("\nDizinin %d. elemanini ekrana girin:",i+1);
-int eleman;
-scanf("%d",&eleman);
-diziyeElemanEkle(&dizi,eleman);
-}
+    printf("\nElements of the array:\n");
+    for (int i = 0; i < array.index; i++) {
+        printf("%d ", array.data[i]);
+    }
+    printf("\n");
 
-printf("Dizinin elemanlari:\n");
-for(int i=0;i<dizi.indis;i++){
-    printf("%d ",dizi.veri[i]);
-}
-free(dizi.veri);
+    free(array.data);
 
-
-
-
-
-
-
-
-return 0;
+    return 0;
 }
